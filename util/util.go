@@ -1,8 +1,8 @@
 package util
 
 import (
+	"confdn/log"
 	"fmt"
-	"github.com/kelseyhightower/confd/log"
 	"os"
 	"path"
 	"path/filepath"

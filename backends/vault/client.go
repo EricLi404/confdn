@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"path"
 
+	"confdn/log"
 	vaultapi "github.com/hashicorp/vault/api"
-	"github.com/kelseyhightower/confd/log"
 )
 
 // Client is a wrapper around the vault client

@@ -8,9 +8,9 @@ import (
 	"runtime"
 	"syscall"
 
-	"github.com/kelseyhightower/confd/backends"
-	"github.com/kelseyhightower/confd/log"
-	"github.com/kelseyhightower/confd/resource/template"
+	"confdn/backends"
+	"confdn/log"
+	"confdn/resource/template"
 )
 
 func main() {

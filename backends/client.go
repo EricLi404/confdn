@@ -1,21 +1,21 @@
 package backends
 
 import (
+	"confdn/backends/etcd"
+	"confdn/backends/etcdv3"
 	"errors"
 	"strings"
 
-	"github.com/kelseyhightower/confd/backends/consul"
-	"github.com/kelseyhightower/confd/backends/dynamodb"
-	"github.com/kelseyhightower/confd/backends/env"
-	"github.com/kelseyhightower/confd/backends/etcd"
-	"github.com/kelseyhightower/confd/backends/etcdv3"
-	"github.com/kelseyhightower/confd/backends/file"
-	"github.com/kelseyhightower/confd/backends/rancher"
-	"github.com/kelseyhightower/confd/backends/redis"
-	"github.com/kelseyhightower/confd/backends/ssm"
-	"github.com/kelseyhightower/confd/backends/vault"
-	"github.com/kelseyhightower/confd/backends/zookeeper"
-	"github.com/kelseyhightower/confd/log"
+	"confdn/backends/consul"
+	"confdn/backends/dynamodb"
+	"confdn/backends/env"
+	"confdn/backends/file"
+	"confdn/backends/rancher"
+	"confdn/backends/redis"
+	"confdn/backends/ssm"
+	"confdn/backends/vault"
+	"confdn/backends/zookeeper"
+	"confdn/log"
 )
 
 // The StoreClient interface is implemented by objects that can retrieve

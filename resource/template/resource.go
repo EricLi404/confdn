@@ -14,12 +14,12 @@ import (
 	"strings"
 	"text/template"
 
+	"confdn/backends"
+	"confdn/log"
+	util "confdn/util"
+	"confdn/util/secconf"
 	"github.com/BurntSushi/toml"
-	"github.com/kelseyhightower/confd/backends"
-	"github.com/kelseyhightower/confd/log"
-	util "github.com/kelseyhightower/confd/util"
 	"github.com/kelseyhightower/memkv"
-	"github.com/xordataexchange/crypt/encoding/secconf"
 )
 
 type Config struct {

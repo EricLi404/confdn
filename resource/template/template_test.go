@@ -2,14 +2,14 @@ package template
 
 import (
 	"bytes"
+	"confdn/util/secconf"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"testing"
 
-	"github.com/kelseyhightower/confd/backends"
-	"github.com/xordataexchange/crypt/encoding/secconf"
+	"confdn/backends"
 )
 
 const (

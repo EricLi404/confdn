@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kelseyhightower/confd/log"
+	"confdn/log"
 	zk "github.com/samuel/go-zookeeper/zk"
 )
 
@@ -15,7 +15,7 @@ type Client struct {
 }
 
 func NewZookeeperClient(machines []string) (*Client, error) {
-	c, _, err := zk.Connect(machines, time.Second) //*10)
+	c, _, err := zk.Connect(machines, time.Second) // *10)
 	if err != nil {
 		panic(err)
 	}
@@ -126,7 +126,7 @@ func (c *Client) WatchPrefix(prefix string, keys []string, waitIndex uint64, sto
 	cancelRoutine := make(chan bool)
 	defer close(cancelRoutine)
 
-	//watch all subfolders for changes
+	// watch all subfolders for changes
 	watchMap := make(map[string]string)
 	for k, _ := range entries {
 		for _, v := range keys {
@@ -143,7 +143,7 @@ func (c *Client) WatchPrefix(prefix string, keys []string, waitIndex uint64, sto
 		}
 	}
 
-	//watch all keys in prefix for changes
+	// watch all keys in prefix for changes
 	for k, _ := range entries {
 		for _, v := range keys {
 			if strings.HasPrefix(k, v) {

@@ -3,11 +3,11 @@ package ssm
 import (
 	"os"
 
+	"confdn/log"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
-	"github.com/kelseyhightower/confd/log"
 )
 
 type Client struct {
