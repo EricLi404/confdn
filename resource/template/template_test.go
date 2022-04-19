@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/kelseyhightower/confd/backends"
-	"github.com/xordataexchange/crypt/encoding/secconf"
+	"github.com/EricLi404/confdn/backends"
+	"github.com/EricLi404/confdn/util/secconf"
 )
 
 const (

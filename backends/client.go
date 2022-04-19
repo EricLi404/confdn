@@ -4,19 +4,19 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/kelseyhightower/confd/backends/consul"
-	"github.com/kelseyhightower/confd/backends/dynamodb"
-	"github.com/kelseyhightower/confd/backends/env"
-	"github.com/kelseyhightower/confd/backends/etcd"
-	"github.com/kelseyhightower/confd/backends/etcdv3"
-	"github.com/kelseyhightower/confd/backends/file"
-	"github.com/kelseyhightower/confd/backends/rancher"
-	"github.com/kelseyhightower/confd/backends/redis"
-	"github.com/kelseyhightower/confd/backends/ssm"
-	"github.com/kelseyhightower/confd/backends/vault"
-	"github.com/kelseyhightower/confd/backends/zookeeper"
-	"github.com/kelseyhightower/confd/log"
-	"github.com/kelseyhightower/confd/backends/nacos"
+	"github.com/EricLi404/confdn/backends/consul"
+	"github.com/EricLi404/confdn/backends/dynamodb"
+	"github.com/EricLi404/confdn/backends/env"
+	"github.com/EricLi404/confdn/backends/etcd"
+	"github.com/EricLi404/confdn/backends/etcdv3"
+	"github.com/EricLi404/confdn/backends/file"
+	"github.com/EricLi404/confdn/backends/nacos"
+	"github.com/EricLi404/confdn/backends/rancher"
+	"github.com/EricLi404/confdn/backends/redis"
+	"github.com/EricLi404/confdn/backends/ssm"
+	"github.com/EricLi404/confdn/backends/vault"
+	"github.com/EricLi404/confdn/backends/zookeeper"
+	"github.com/EricLi404/confdn/log"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 )
 
@@ -91,13 +91,13 @@ func New(config Config) (StoreClient, error) {
 		return ssm.New()
 	case "nacos":
 		return nacos.NewNacosClient(backendNodes, config.Group, constant.ClientConfig{
-					NamespaceId: 	config.Namespace,
-					AccessKey: 		config.AccessKey,
-					SecretKey: 		config.SecretKey,
-					Endpoint:  		config.Endpoint,
-					OpenKMS:		config.OpenKMS,
-					RegionId: 	    config.RegionId,
-				})
+			NamespaceId: config.Namespace,
+			AccessKey:   config.AccessKey,
+			SecretKey:   config.SecretKey,
+			Endpoint:    config.Endpoint,
+			OpenKMS:     config.OpenKMS,
+			RegionId:    config.RegionId,
+		})
 	}
 	return nil, errors.New("Invalid backend")
 }

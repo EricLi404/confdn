@@ -1,4 +1,4 @@
-.PHONY: build install clean test integration dep release
+.PHONY: build install clean test integration mod docker
 VERSION=`egrep -o '[0-9]+\.[0-9a-z.\-]+' version.go`
 GIT_SHA=`git rev-parse --short HEAD || echo`
 
@@ -27,10 +27,10 @@ integration:
 		rm /tmp/confd-*; \
 	done
 
-dep:
-	@dep ensure
+mod:
+	@go mod vendor -v
 
-release:
+docker:
 	@docker build -q -t confd_builder -f Dockerfile.build.alpine .
 	@for platform in darwin linux windows; do \
 		if [ $$platform == windows ]; then extension=.exe; fi; \

@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/nacos-group/nacos-sdk-go/inner/uuid"
 	"reflect"
 	"testing"
 
-	"github.com/kelseyhightower/confd/log"
-	"github.com/satori/go.uuid"
+	"github.com/EricLi404/confdn/log"
 )
 
 func TestInitConfigDefaultConfig(t *testing.T) {

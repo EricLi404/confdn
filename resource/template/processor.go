@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kelseyhightower/confd/log"
-	util "github.com/kelseyhightower/confd/util"
+	"github.com/EricLi404/confdn/log"
+	util "github.com/EricLi404/confdn/util"
 )
 
 type Processor interface {

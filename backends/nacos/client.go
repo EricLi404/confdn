@@ -1,19 +1,19 @@
 package nacos
 
 import (
+	"github.com/EricLi404/confdn/log"
+	utils "github.com/EricLi404/confdn/util"
+	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
 	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
-	"github.com/nacos-group/nacos-sdk-go/clients"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/model"
 	"github.com/nacos-group/nacos-sdk-go/vo"
-	"github.com/nacos-group/nacos-sdk-go/utils"
-	"github.com/kelseyhightower/confd/log"
 
 	"fmt"
-	"strings"
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 var replacer = strings.NewReplacer("/", ".")
@@ -21,20 +21,19 @@ var replacer = strings.NewReplacer("/", ".")
 type Client struct {
 	configClient config_client.IConfigClient
 	namingClient naming_client.INamingClient
-	group string
-	namespace string
-	accessKey string
-	secretKey string
-	channel chan int
-	count int
+	group        string
+	namespace    string
+	accessKey    string
+	secretKey    string
+	channel      chan int
+	count        int
 }
 
 func NewNacosClient(nodes []string, group string, config constant.ClientConfig) (client *Client, err error) {
 	var configClient config_client.IConfigClient
-	servers := []constant.ServerConfig{
-	}
+	servers := []constant.ServerConfig{}
 	for _, key := range nodes {
-		nacosUrl,_ := url.Parse(key)
+		nacosUrl, _ := url.Parse(key)
 
 		port, _ := strconv.Atoi(nacosUrl.Port())
 		servers = append(servers, constant.ServerConfig{
@@ -55,12 +54,12 @@ func NewNacosClient(nodes []string, group string, config constant.ClientConfig) 
 			TimeoutMs:           20000,
 			ListenInterval:      10000,
 			NotLoadCacheAtStart: true,
-			NamespaceId:	     config.NamespaceId,
-			AccessKey: 			 config.AccessKey,
-			SecretKey: 			 config.SecretKey,
-			Endpoint:   		 config.Endpoint,
-			OpenKMS: 			 config.OpenKMS,
-			RegionId: 			 config.RegionId,
+			NamespaceId:         config.NamespaceId,
+			AccessKey:           config.AccessKey,
+			SecretKey:           config.SecretKey,
+			Endpoint:            config.Endpoint,
+			OpenKMS:             config.OpenKMS,
+			RegionId:            config.RegionId,
 		},
 	})
 
@@ -70,10 +69,10 @@ func NewNacosClient(nodes []string, group string, config constant.ClientConfig) 
 			TimeoutMs:           20000,
 			ListenInterval:      10000,
 			NotLoadCacheAtStart: true,
-			NamespaceId:	     config.NamespaceId,
-			AccessKey: 			 config.AccessKey,
-			SecretKey: 			 config.SecretKey,
-			Endpoint:   		 config.Endpoint,
+			NamespaceId:         config.NamespaceId,
+			AccessKey:           config.AccessKey,
+			SecretKey:           config.SecretKey,
+			Endpoint:            config.Endpoint,
 		},
 	})
 
@@ -88,12 +87,11 @@ func (client *Client) GetValues(keys []string) (map[string]string, error) {
 		k := strings.TrimPrefix(key, "/")
 		k = replacer.Replace(k)
 
-
 		if strings.HasPrefix(k, "naming.") {
 			instances, err := client.namingClient.SelectAllInstances(vo.SelectAllInstancesParam{
 				ServiceName: k,
 				GroupName:   client.group,
-				//HealthyOnly: true,
+				// HealthyOnly: true,
 			})
 
 			log.Info(fmt.Sprintf("key=%s, value=%s", key, instances))
@@ -102,8 +100,8 @@ func (client *Client) GetValues(keys []string) (map[string]string, error) {
 			}
 		} else {
 			resp, err := client.configClient.GetConfig(vo.ConfigParam{
-				DataId:  k,
-				Group: client.group,
+				DataId: k,
+				Group:  client.group,
 			})
 			log.Info(fmt.Sprintf("key=%s, value=%s", key, resp))
 
@@ -131,35 +129,34 @@ func (client *Client) WatchPrefix(prefix string, keys []string, waitIndex uint64
 					SubscribeCallback: func(services []model.SubscribeService, err error) {
 						log.Info(fmt.Sprintf("\n\n callback return services:%s \n\n", utils.ToJsonString(services)))
 						for i := 0; i < client.count; i++ {
-        					client.channel <- 1	
-    					}
+							client.channel <- 1
+						}
 					},
 				})
 			} else {
 				err := client.configClient.ListenConfig(vo.ConfigParam{
-					DataId:  k,
-					Group: client.group,
+					DataId: k,
+					Group:  client.group,
 					OnChange: func(namespace, group, dataId, data string) {
 						log.Info(fmt.Sprintf("config namespace=%s, dataId=%s, group=%s has changed", namespace, dataId, group))
 						for i := 0; i < client.count; i++ {
-        					client.channel <- 1	
-    					}
+							client.channel <- 1
+						}
 					},
 				})
 
 				if err != nil {
-					return 0,err
+					return 0, err
 				}
 			}
 		}
-
 
 		return 1, nil
 	}
 
 	select {
-		case <- client.channel:
-			return waitIndex,nil
+	case <-client.channel:
+		return waitIndex, nil
 
 	}
 

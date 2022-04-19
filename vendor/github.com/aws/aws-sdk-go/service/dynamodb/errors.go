@@ -2,6 +2,10 @@
 
 package dynamodb
 
+import (
+	"github.com/aws/aws-sdk-go/private/protocol"
+)
+
 const (
 
 	// ErrCodeBackupInUseException for service response error code
@@ -28,6 +32,25 @@ const (
 	//
 	// Backups have not yet been enabled for this table.
 	ErrCodeContinuousBackupsUnavailableException = "ContinuousBackupsUnavailableException"
+
+	// ErrCodeDuplicateItemException for service response error code
+	// "DuplicateItemException".
+	//
+	// There was an attempt to insert an item with the same primary key as an item
+	// that already exists in the DynamoDB table.
+	ErrCodeDuplicateItemException = "DuplicateItemException"
+
+	// ErrCodeExportConflictException for service response error code
+	// "ExportConflictException".
+	//
+	// There was a conflict when writing to the specified S3 bucket.
+	ErrCodeExportConflictException = "ExportConflictException"
+
+	// ErrCodeExportNotFoundException for service response error code
+	// "ExportNotFoundException".
+	//
+	// The specified export was not found.
+	ErrCodeExportNotFoundException = "ExportNotFoundException"
 
 	// ErrCodeGlobalTableAlreadyExistsException for service response error code
 	// "GlobalTableAlreadyExistsException".
@@ -60,6 +83,12 @@ const (
 	// An error occurred on the server side.
 	ErrCodeInternalServerError = "InternalServerError"
 
+	// ErrCodeInvalidExportTimeException for service response error code
+	// "InvalidExportTimeException".
+	//
+	// The specified ExportTime is outside of the point in time recovery window.
+	ErrCodeInvalidExportTimeException = "InvalidExportTimeException"
+
 	// ErrCodeInvalidRestoreTimeException for service response error code
 	// "InvalidRestoreTimeException".
 	//
@@ -88,7 +117,7 @@ const (
 	// if the table or index specifications are complex, DynamoDB might temporarily
 	// reduce the number of concurrent operations.
 	//
-	// There is a soft account limit of 256 tables.
+	// There is a soft account quota of 256 tables.
 	ErrCodeLimitExceededException = "LimitExceededException"
 
 	// ErrCodePointInTimeRecoveryUnavailableException for service response error code
@@ -100,11 +129,11 @@ const (
 	// ErrCodeProvisionedThroughputExceededException for service response error code
 	// "ProvisionedThroughputExceededException".
 	//
-	// Your request rate is too high. The AWS SDKs for DynamoDB automatically retry
-	// requests that receive this exception. Your request is eventually successful,
-	// unless your retry queue is too large to finish. Reduce the frequency of requests
-	// and use exponential backoff. For more information, go to Error Retries and
-	// Exponential Backoff (https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.Errors.html#Programming.Errors.RetryAndBackoff)
+	// Your request rate is too high. The Amazon Web Services SDKs for DynamoDB
+	// automatically retry requests that receive this exception. Your request is
+	// eventually successful, unless your retry queue is too large to finish. Reduce
+	// the frequency of requests and use exponential backoff. For more information,
+	// go to Error Retries and Exponential Backoff (https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.Errors.html#Programming.Errors.RetryAndBackoff)
 	// in the Amazon DynamoDB Developer Guide.
 	ErrCodeProvisionedThroughputExceededException = "ProvisionedThroughputExceededException"
 
@@ -123,9 +152,9 @@ const (
 	// ErrCodeRequestLimitExceeded for service response error code
 	// "RequestLimitExceeded".
 	//
-	// Throughput exceeds the current throughput limit for your account. Please
-	// contact AWS Support at AWS Support (https://aws.amazon.com/support) to request
-	// a limit increase.
+	// Throughput exceeds the current throughput quota for your account. Please
+	// contact Amazon Web Services Support (https://aws.amazon.com/support) to request
+	// a quota increase.
 	ErrCodeRequestLimitExceeded = "RequestLimitExceeded"
 
 	// ErrCodeResourceInUseException for service response error code
@@ -184,8 +213,6 @@ const (
 	//    index (LSI) becomes too large, or a similar validation error occurs because
 	//    of changes made by the transaction.
 	//
-	//    * The aggregate size of the items in the transaction exceeds 4 MBs.
-	//
 	//    * There is a user error, such as an invalid data format.
 	//
 	// DynamoDB cancels a TransactGetItems request under the following circumstances:
@@ -199,8 +226,6 @@ const (
 	//
 	//    * There is insufficient provisioned capacity for the transaction to be
 	//    completed.
-	//
-	//    * The aggregate size of the items in the transaction exceeds 4 MBs.
 	//
 	//    * There is a user error, such as an invalid data format.
 	//
@@ -268,3 +293,35 @@ const (
 	// The transaction with the given request token is already in progress.
 	ErrCodeTransactionInProgressException = "TransactionInProgressException"
 )
+
+var exceptionFromCode = map[string]func(protocol.ResponseMetadata) error{
+	"BackupInUseException":                     newErrorBackupInUseException,
+	"BackupNotFoundException":                  newErrorBackupNotFoundException,
+	"ConditionalCheckFailedException":          newErrorConditionalCheckFailedException,
+	"ContinuousBackupsUnavailableException":    newErrorContinuousBackupsUnavailableException,
+	"DuplicateItemException":                   newErrorDuplicateItemException,
+	"ExportConflictException":                  newErrorExportConflictException,
+	"ExportNotFoundException":                  newErrorExportNotFoundException,
+	"GlobalTableAlreadyExistsException":        newErrorGlobalTableAlreadyExistsException,
+	"GlobalTableNotFoundException":             newErrorGlobalTableNotFoundException,
+	"IdempotentParameterMismatchException":     newErrorIdempotentParameterMismatchException,
+	"IndexNotFoundException":                   newErrorIndexNotFoundException,
+	"InternalServerError":                      newErrorInternalServerError,
+	"InvalidExportTimeException":               newErrorInvalidExportTimeException,
+	"InvalidRestoreTimeException":              newErrorInvalidRestoreTimeException,
+	"ItemCollectionSizeLimitExceededException": newErrorItemCollectionSizeLimitExceededException,
+	"LimitExceededException":                   newErrorLimitExceededException,
+	"PointInTimeRecoveryUnavailableException":  newErrorPointInTimeRecoveryUnavailableException,
+	"ProvisionedThroughputExceededException":   newErrorProvisionedThroughputExceededException,
+	"ReplicaAlreadyExistsException":            newErrorReplicaAlreadyExistsException,
+	"ReplicaNotFoundException":                 newErrorReplicaNotFoundException,
+	"RequestLimitExceeded":                     newErrorRequestLimitExceeded,
+	"ResourceInUseException":                   newErrorResourceInUseException,
+	"ResourceNotFoundException":                newErrorResourceNotFoundException,
+	"TableAlreadyExistsException":              newErrorTableAlreadyExistsException,
+	"TableInUseException":                      newErrorTableInUseException,
+	"TableNotFoundException":                   newErrorTableNotFoundException,
+	"TransactionCanceledException":             newErrorTransactionCanceledException,
+	"TransactionConflictException":             newErrorTransactionConflictException,
+	"TransactionInProgressException":           newErrorTransactionInProgressException,
+}

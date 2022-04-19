@@ -1,8 +1,9 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/kelseyhightower/confd/log"
+	"github.com/EricLi404/confdn/log"
 	"os"
 	"path"
 	"path/filepath"
@@ -136,4 +137,9 @@ func recursiveLookup(root string, pattern string, dirsLookup bool) ([]string, er
 		}
 	}
 	return result, nil
+}
+
+func ToJsonString(object interface{}) string {
+	js, _ := json.Marshal(object)
+	return string(js)
 }

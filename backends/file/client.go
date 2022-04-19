@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/EricLi404/confdn/log"
+	util "github.com/EricLi404/confdn/util"
 	"github.com/fsnotify/fsnotify"
-	"github.com/kelseyhightower/confd/log"
-	util "github.com/kelseyhightower/confd/util"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var replacer = strings.NewReplacer("/", "_")
