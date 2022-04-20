@@ -29,6 +29,7 @@ type Config struct {
 	SRVDomain     string `toml:"srv_domain"`
 	SRVRecord     string `toml:"srv_record"`
 	LogLevel      string `toml:"log-level"`
+	LogPath       string `toml:"log-path"`
 	Watch         bool   `toml:"watch"`
 	PrintVersion  bool
 	ConfigFile    string
@@ -52,6 +53,7 @@ func init() {
 	flag.IntVar(&config.Interval, "interval", 600, "backend polling interval")
 	flag.BoolVar(&config.KeepStageFile, "keep-stage-file", false, "keep staged files")
 	flag.StringVar(&config.LogLevel, "log-level", "", "level which confd should log messages")
+	flag.StringVar(&config.LogPath, "log-path", "", "path which confd should log messages")
 	flag.Var(&config.BackendNodes, "node", "list of backend nodes")
 	flag.BoolVar(&config.Noop, "noop", false, "only show pending changes")
 	flag.BoolVar(&config.OneTime, "onetime", false, "run once and exit")
@@ -121,6 +123,10 @@ func initConfig() error {
 
 	if config.LogLevel != "" {
 		log.SetLevel(config.LogLevel)
+	}
+
+	if config.LogPath != "" {
+		log.AddFileOutput(config.LogPath)
 	}
 
 	if config.SRVDomain != "" && config.SRVRecord == "" {

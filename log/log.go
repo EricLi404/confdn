@@ -9,6 +9,8 @@ package log
 
 import (
 	"fmt"
+	"gopkg.in/natefinch/lumberjack.v2"
+	"io"
 	"os"
 	"strings"
 	"time"
@@ -46,6 +48,19 @@ func SetLevel(level string) {
 		Fatal(fmt.Sprintf(`not a valid level: "%s"`, level))
 	}
 	log.SetLevel(lvl)
+}
+
+func AddFileOutput(path string) {
+	oFile := &lumberjack.Logger{
+		Filename:   path,
+		MaxSize:    500,  // 日志文件大小，单位是 MB
+		MaxBackups: 3,    // 最大过期日志保留个数
+		MaxAge:     28,   // 保留过期文件最大时间，单位 天
+		Compress:   true, // 是否压缩日志，默认是不压缩。这里设置为true，压缩日志
+	}
+	sout := os.Stdout
+
+	log.SetOutput(io.MultiWriter(sout, oFile))
 }
 
 // Debug logs a message with severity DEBUG.
