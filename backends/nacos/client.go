@@ -3,12 +3,12 @@ package nacos
 import (
 	"github.com/EricLi404/confdn/log"
 	utils "github.com/EricLi404/confdn/util"
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/clients/config_client"
-	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/model"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/config_client"
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/model"
+	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 
 	"fmt"
 	"net/url"
@@ -31,7 +31,7 @@ type Client struct {
 
 func NewNacosClient(nodes []string, group string, config constant.ClientConfig) (client *Client, err error) {
 	var configClient config_client.IConfigClient
-	servers := []constant.ServerConfig{}
+	var servers []constant.ServerConfig
 	for _, key := range nodes {
 		nacosUrl, _ := url.Parse(key)
 
@@ -52,7 +52,6 @@ func NewNacosClient(nodes []string, group string, config constant.ClientConfig) 
 		"serverConfigs": servers,
 		"clientConfig": constant.ClientConfig{
 			TimeoutMs:           20000,
-			ListenInterval:      10000,
 			NotLoadCacheAtStart: true,
 			NamespaceId:         config.NamespaceId,
 			AccessKey:           config.AccessKey,
@@ -60,6 +59,8 @@ func NewNacosClient(nodes []string, group string, config constant.ClientConfig) 
 			Endpoint:            config.Endpoint,
 			OpenKMS:             config.OpenKMS,
 			RegionId:            config.RegionId,
+			Username:            config.Username,
+			Password:            config.Password,
 		},
 	})
 
@@ -67,12 +68,13 @@ func NewNacosClient(nodes []string, group string, config constant.ClientConfig) 
 		"serverConfigs": servers,
 		"clientConfig": constant.ClientConfig{
 			TimeoutMs:           20000,
-			ListenInterval:      10000,
 			NotLoadCacheAtStart: true,
 			NamespaceId:         config.NamespaceId,
 			AccessKey:           config.AccessKey,
 			SecretKey:           config.SecretKey,
 			Endpoint:            config.Endpoint,
+			Username:            config.Username,
+			Password:            config.Password,
 		},
 	})
 
@@ -123,16 +125,19 @@ func (client *Client) WatchPrefix(prefix string, keys []string, waitIndex uint64
 			k = replacer.Replace(k)
 
 			if strings.HasPrefix(k, "naming.") {
-				client.namingClient.Subscribe(&vo.SubscribeParam{
+				err := client.namingClient.Subscribe(&vo.SubscribeParam{
 					ServiceName: k,
 					GroupName:   client.group,
-					SubscribeCallback: func(services []model.SubscribeService, err error) {
+					SubscribeCallback: func(services []model.Instance, err error) {
 						log.Info(fmt.Sprintf("\n\n callback return services:%s \n\n", utils.ToJsonString(services)))
 						for i := 0; i < client.count; i++ {
 							client.channel <- 1
 						}
 					},
 				})
+				if err != nil {
+					return 0, err
+				}
 			} else {
 				err := client.configClient.ListenConfig(vo.ConfigParam{
 					DataId: k,
@@ -150,15 +155,11 @@ func (client *Client) WatchPrefix(prefix string, keys []string, waitIndex uint64
 				}
 			}
 		}
-
 		return 1, nil
 	}
 
 	select {
 	case <-client.channel:
 		return waitIndex, nil
-
 	}
-
-	return waitIndex, nil
 }

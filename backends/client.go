@@ -17,7 +17,7 @@ import (
 	"github.com/EricLi404/confdn/backends/vault"
 	"github.com/EricLi404/confdn/backends/zookeeper"
 	"github.com/EricLi404/confdn/log"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
+	"github.com/nacos-group/nacos-sdk-go/v2/common/constant"
 )
 
 // The StoreClient interface is implemented by objects that can retrieve
@@ -97,6 +97,8 @@ func New(config Config) (StoreClient, error) {
 			Endpoint:    config.Endpoint,
 			OpenKMS:     config.OpenKMS,
 			RegionId:    config.RegionId,
+			Username:    config.Username,
+			Password:    config.Password,
 		})
 	}
 	return nil, errors.New("Invalid backend")

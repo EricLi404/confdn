@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nacos-group/nacos-sdk-go/inner/uuid"
+	"github.com/nacos-group/nacos-sdk-go/v2/inner/uuid"
 	"reflect"
 	"testing"
 
