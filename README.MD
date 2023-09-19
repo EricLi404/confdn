@@ -2,6 +2,6 @@
 
 
 ### TODO
-- [ ] docker 封装
+- [x] docker 封装
 - [ ] make test 完善
-- [ ] .travis.yml 完善
+- [x] .travis.yml 完善
